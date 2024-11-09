@@ -1,0 +1,75 @@
+{
+  "name": "bunny-og",
+  "version": "0.0.0",
+  "private": false,
+  "type": "module",
+  "description": "@vercel/og for Edge Scripting for bunny.net 🐰",
+  "keywords": [
+    "BunnyCDN",
+    "bunny.net",
+    "bunny",
+    "cdn",
+    "bunny-launcher",
+    "typescript",
+    "edge-scripting",
+    "edge",
+    "scripting",
+    "vercel-og",
+    "wasm"
+  ],
+  "homepage": "https://bunny-launcher.net/imaging/og/",
+  "bugs": "https://github.com/jlarmstrongiv/bunny-og/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jlarmstrongiv/bunny-og.git"
+  },
+  "license": "MPL-2.0",
+  "author": "John L. Armstrong IV",
+  "sideEffects": false,
+  "scripts": {
+    "build:dev": "MINIFY=false npx tsx src/bundler",
+    "build": "npx tsx src/bundler",
+    "patch": "npx patch-package @vercel/og --exclude='nothing'",
+    "postinstall:local": "npx patch-package",
+    "prepublishOnly": "npm run build",
+    "pretest:deno": "npm run build:dev",
+    "pretest:node": "npm run build:dev",
+    "test:deno": "deno run --allow-all src/test/index.test.tsx",
+    "test:node": "npx tsx src/test/index.test.tsx"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+    "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "20.1.4",
+    "@types/fs-extra": "11.0.4",
+    "@types/node": "22.5.4",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "@vercel/og": "0.6.3",
+    "esbuild": "0.24.0",
+    "fs-extra": "11.2.0",
+    "patch-package": "8.0.0",
+    "tsx": "4.19.1",
+    "typescript": "5.5.4"
+  },
+  "packageManager": "npm@10.9.0",
+  "engines": {
+    "node": ">=20"
+  }
+}
