@@ -3,36 +3,45 @@ new file mode 100644
 index 0000000..f3ccc5f
 Binary files /dev/null and b/node_modules/@vercel/og/.DS_Store differ
 diff --git a/node_modules/@vercel/og/dist/index.edge.js b/node_modules/@vercel/og/dist/index.edge.js
-index 3a2f17f..b75116e 100644
+index 3a2f17f..1285f8f 100644
 --- a/node_modules/@vercel/og/dist/index.edge.js
 +++ b/node_modules/@vercel/og/dist/index.edge.js
-@@ -1,3 +1,25 @@
+@@ -1,3 +1,34 @@
 +// src/index.edge.ts
 +// import resvg_wasm from "./resvg.wasm?module";
 +// import yoga_wasm from "./yoga.wasm?module";
-+import resvgWasmGzipBase64 from "./resvg.wasm.gz";
 +import yoga3WasmGzipBase64 from "./yoga.wasm.gz";
++import ogPkg from "../package.json";
++import rootPkg from "../../../../package.json";
 +
-+// reference 
-+// - https://github.com/sindresorhus/uint8array-extras/blob/main/index.js
-+// - https://developer.mozilla.org/en-US/docs/Web/API/Compression_Streams_API
-+async function decodeBase64Gzip(base64String) {
-+  return await new Response(
-+    new Response(
-+      Uint8Array.from(
-+        globalThis.atob(base64String.replaceAll("-", "+").replaceAll("_", "/")),
-+        (x) => x.codePointAt(0)
-+      )
-+    ).body?.pipeThrough(new DecompressionStream("gzip"))
-+  ).bytes();
-+}
-+const resvg_wasm = await decodeBase64Gzip(resvgWasmGzipBase64);
-+const yoga_wasm = await decodeBase64Gzip(yoga3WasmGzipBase64);
++const yoga_wasm = await new Response(
++  new Response(
++    Uint8Array.from(
++      globalThis.atob(
++        yoga3WasmGzipBase64.replaceAll("-", "+").replaceAll("_", "/")
++      ),
++      (x) => x.codePointAt(0)
++    )
++  ).body?.pipeThrough(new DecompressionStream("gzip"))
++).bytes();
++
++const resvg_wasm = await new Response(
++  (
++    await fetch(
++      `https://cdn.jsdelivr.net/npm/${rootPkg.name}@${rootPkg.version}/dist/resvg.wasm.gz`
++    )
++  ).body?.pipeThrough(new DecompressionStream("gzip")),
++  {
++    headers: {
++      "Content-Type": "application/wasm",
++    },
++  }
++).bytes();
 +
  var __create = Object.create;
  var __defProp = Object.defineProperty;
  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-@@ -18564,10 +18586,6 @@ var Resvg2 = class extends Resvg {
+@@ -18564,10 +18595,6 @@ var Resvg2 = class extends Resvg {
    }
  };
  
@@ -43,12 +52,12 @@ index 3a2f17f..b75116e 100644
  // src/emoji/index.ts
  var U200D = String.fromCharCode(8205);
  var UFE0Fg = /\uFE0F/g;
-@@ -18984,7 +19002,7 @@ function assertValue(v, errorMessage) {
+@@ -18984,7 +19011,7 @@ function assertValue(v, errorMessage) {
  // src/index.edge.ts
  var initializedResvg = initWasm(resvg_wasm);
  var initializedYoga = initYoga(yoga_wasm).then((yoga2) => Rl(yoga2));
 -var fallbackFont = fetch(new URL("./noto-sans-v27-latin-regular.ttf", import.meta.url)).then((res) => res.arrayBuffer());
-+var fallbackFont = fetch("https://cdn.jsdelivr.net/npm/@vercel/og@0.6.3/noto-sans-v27-latin-regular.ttf").then((res) => res.arrayBuffer());
++var fallbackFont = fetch(`https://cdn.jsdelivr.net/npm/${ogPkg.name}@${ogPkg.version}/noto-sans-v27-latin-regular.ttf`).then((res) => res.arrayBuffer());
  var ImageResponse = class extends Response {
    constructor(element, options = {}) {
      const result = new ReadableStream({
